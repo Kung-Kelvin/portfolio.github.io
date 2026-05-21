@@ -1,264 +1,150 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ポートフォリオテンプレート</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Enterprise Kanban & Markov Analytics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        .hero {
-            position: relative;
-            background-image: url("hero background.jpg");
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 120px 0;
-            text-align: center;
-        }
-
-        .hero::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .hero .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        footer {
-            background: #343a40;
-            color: #aaa;
-            padding: 20px 0;
-            text-align: center;
-            margin-top: 50px;
-        }
+      .kanban-col { min-height: 500px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #dee2e6; }
+      .importance-high { border-left: 5px solid #dc3545 !important; }
+      .importance-medium { border-left: 5px solid #ffc107 !important; }
+      .importance-low { border-left: 5px solid #0d6efd !important; }
+      .importance-none { border-left: 5px solid #6c757d !important; }
+      .fs-7 { font-size: 0.75rem; }
     </style>
-</head>
+  </head>
+  <body class="bg-light">
 
-<body>
-    <!-- ナビバー（白色） -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="#">Portfolio Template</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#profile">Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#works">Works</a></li>
-                </ul>
-            </div>
-        </div>
+    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm px-4">
+      <span class="navbar-brand mb-0 h1 fw-bold">📈 KANBAN WORKSPACE & STOCHASTIC MATHEMATICS ENGINE</span>
+      <div class="d-flex gap-2">
+        <button id="btn-export" class="btn btn-sm btn-outline-light">📤 JSONエクスポート</button>
+        <button id="btn-import-trigger" class="btn btn-sm btn-outline-light" onclick="document.getElementById('import-file').click()">📥 JSONインポート</button>
+        <input type="file" id="import-file" class="d-none" accept=".json" />
+      </div>
     </nav>
 
-    <!-- ヒーロー -->
-    <section class="hero d-flex align-items-center">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-3">My Portfolio</h1>
-            <p class="lead">Portfolio Workshop Template</p>
-        </div>
-    </section>
+    <div class="container-fluid px-4">
+      <div class="row g-4">
+        
+        <div class="col-xl-4 col-lg-5">
+          
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-2 fw-bold text-secondary">📝 タスク & 工程登録</div>
+            <div class="card-body">
+              <form id="todo-form">
+                <div class="row g-2 mb-2">
+                  <div class="col-8">
+                    <input id="todo-input" class="form-control form-control-sm" placeholder="メインタスク名..." required />
+                  </div>
+                  <div class="col-4">
+                    <select id="todo-importance" class="form-select form-select-sm">
+                      <option value="none">重要度: なし</option>
+                      <option value="low">重要度: 低</option>
+                      <option value="medium" selected>重要度: 中</option>
+                      <option value="high">重要度: 高</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <input type="datetime-local" id="todo-deadline" class="form-control form-control-sm" />
+                  </div>
+                  <div class="col-6">
+                    <input type="url" id="todo-link" class="form-control form-control-sm" placeholder="URL (https://...)" />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <textarea id="todo-comment" class="form-control form-control-sm" rows="1" placeholder="メモ・詳細..."></textarea>
+                </div>
 
-    <!-- プロフィール -->
-    <section id="profile" class="py-5 bg-white">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-5">プロフィール</h2>
-            <div class="row align-items-center">
-                <div class="col-md-4 text-center mb-4 mb-md-0">
-                    <img src="blank-profile-picture-973460_960_720.png" class="rounded-circle shadow-sm mb-3"
-                        style="width:200px; height:200px; object-fit:cover;" alt="プロフィール画像">
+                <div class="p-2 border rounded bg-light mb-3">
+                  <small class="fw-bold d-block text-muted mb-1">🏁 サブ・マイルストーン工程追加</small>
+                  <div class="row g-1 mb-1">
+                    <div class="col-7"><input type="text" id="ms-title-input" class="form-control form-control-sm" placeholder="マイルストーン名..." /></div>
+                    <div class="col-5">
+                      <select id="ms-importance-input" class="form-select form-select-sm">
+                        <option value="none">優先: なし</option>
+                        <option value="low">優先: 低</option>
+                        <option value="medium" selected>優先: 中</option>
+                        <option value="high">優先: 高</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <input type="datetime-local" id="ms-deadline-input" class="form-control" />
+                    <button class="btn btn-success text-white fw-bold" type="button" id="add-milestone-btn">+</button>
+                  </div>
+                  <div id="milestone-queue" class="d-flex flex-wrap gap-1 mt-1"></div>
                 </div>
-                <div class="col-md-8">
-                    <ul class="list-unstyled fs-5 lh-lg mb-4">
-                        <li class="fw-bold fs-3 border-bottom pb-2 mb-3">○○ ○○</li>
-                        <li><strong>所属：</strong>九州工業大学 情報工学部（大学院）</li>
-                        <li><strong>研究室：</strong>○○研究室</li>
-                        <li><strong>Email：</strong>example[at]example.com</li>
-                        <li><strong>GitHub：</strong>github.com/example</li>
-                    </ul>
-                    <p class="text-secondary lh-base">
-                        私は授業演習や研究課題を通して、問題解決力と論理的思考を身につけてきました。
-                        チームでの開発経験もあり、協調性やコミュニケーション力にも自信があります。
-                        小規模ながらWebアプリやデータ解析プロジェクトを手掛け、成果を形にする力も養いました。
-                    </p>
-                </div>
+
+                <button class="btn btn-primary btn-sm w-100 fw-bold" type="submit">🚀 ワークスペースへ追加</button>
+              </form>
             </div>
-        </div>
-    </section>
+          </div>
 
-    <!-- 活動・経験（授業・研究など） -->
-    <section id="experience" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-4">活動・経験（授業・研究など）</h2>
-            <p class="text-center text-secondary mb-5">
-                ※自分の学年や状況に合わせて、授業で取り組んだこと、研究内容、課外活動などでアピールしたいことを記載しましょう。
-            </p>
-
-            <!-- テーマ1：授業内容・頑張ったこと -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col-md-8">
-                        <div class="card-body p-4 p-md-5">
-                            <h5 class="card-title fw-bold mb-3">
-                                【授業・演習】プログラミング演習でのチーム開発
-                            </h5>
-                            <p class="card-text text-secondary lh-lg">
-        大学にて、学内の電気情報を統合管理するデジタルダッシュボードの開発に携わりました。当時、データは各所に散逸し、その多くがデジタル化されず紙媒体のまま保管されているという課題がありました。<br>
-        将来的に発生する数千ページに及ぶデータ処理の正確性と速度を担保するため、私は<span class="highlight">Power AutomateとPython、そしてOCR技術を組み合わせた自動抽出プロセス</span>を構築しました。
-        紙のPDFスキャンから直接情報を抽出し、各企業のエネルギー価格や社会情勢などの外部パラメータと照らし合わせる仕組みを考案しました。
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center p-4">
-                        <img src="https://via.placeholder.com/400x250?text=Class+Work" alt="授業での取り組みイメージ"
-                            class="img-fluid rounded shadow-sm object-fit-cover"
-                            style="max-height: 200px; width: 100%;">
-                    </div>
-                </div>
+          <div class="card shadow-sm border-secondary mb-4">
+            <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center">
+              <span class="fw-bold small">🧮 確率的マルコフ連鎖 & ネットワーク解析</span>
+              <button id="btn-run-analytics" class="btn btn-xs btn-info py-0 px-2 font-monospace text-white style-sm" style="font-size:0.7rem;">解析実行</button>
             </div>
+            <div class="card-body p-3" id="analytics-output">
+              <p class="text-muted small text-center mb-0">「解析実行」ボタンをクリックすると、現在のタスク構造から確率行列とクリティカルパスの依存度を算出します。</p>
+            </div>
+          </div>
 
-            <!-- テーマ2：研究内容（配属済みの方向け） -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col-md-8">
-                        <div class="card-body p-4 p-md-5">
-                            <h5 class="card-title fw-bold mb-3">
-                                【研究内容】Webユーザ行動ログの分析
-                            </h5>
-                            <p class="card-text text-secondary lh-lg">
-                                Webサイトのアクセスログを対象に、
-                                ユーザの閲覧傾向や行動パターンを分析する研究を行っています。
-                                Pythonを用いたデータ処理や可視化を通して、
-                                データから傾向を読み取る力を養っています。
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center p-4">
-                        <img src="https://via.placeholder.com/400x250?text=Research" alt="研究テーマのイメージ"
-                            class="img-fluid rounded shadow-sm object-fit-cover"
-                            style="max-height: 200px; width: 100%;">
-                    </div>
+        </div>
+
+        <div class="col-xl-8 col-lg-7">
+          <div class="row g-2">
+            
+            <div class="col-md-3">
+              <div class="p-2 card bg-light border-0 shadow-xs">
+                <div class="fw-bold text-primary mb-2 d-flex justify-content-between align-items-center">
+                  <span>📥 未着手 (Todo)</span>
+                  <span class="badge bg-primary rounded-pill" id="badge-todo">0</span>
                 </div>
+                <div id="col-todo" class="kanban-col p-2 d-flex flex-column gap-2"></div>
+              </div>
             </div>
 
-            <!-- テーマ3：課外活動・自主学習・頑張ったこと -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col-md-8">
-                        <div class="card-body p-4 p-md-5">
-                            <h5 class="card-title fw-bold mb-3">
-                                【課外活動・自主学習】〇〇の資格取得・サークル活動
-                            </h5>
-                            <p class="card-text text-secondary lh-lg">
-                                大学の授業以外にも、〇〇分野に興味を持ち自主的に学習を進め、資格を取得しました。
-                                また、〇〇サークルでは副代表を務め、イベントの企画や運営に携わりました。
-                                目標に向けて継続的に努力する力や、周囲を巻き込んで企画を推進する力を身につけました。
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center p-4">
-                        <img src="https://via.placeholder.com/400x250?text=Extra+Activities" alt="課外活動のイメージ"
-                            class="img-fluid rounded shadow-sm object-fit-cover"
-                            style="max-height: 200px; width: 100%;">
-                    </div>
+            <div class="col-md-3">
+              <div class="p-2 card bg-light border-0 shadow-xs">
+                <div class="fw-bold text-warning mb-2 d-flex justify-content-between align-items-center">
+                  <span>⚡ 進行中 (Progress)</span>
+                  <span class="badge bg-warning text-dark rounded-pill" id="badge-progress">0</span>
                 </div>
+                <div id="col-progress" class="kanban-col p-2 d-flex flex-column gap-2"></div>
+              </div>
             </div>
-        </div>
-    </section>
 
-    <!-- スキル・資格 -->
-    <section id="skills" class="py-5 bg-white">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-5">スキル・資格</h2>
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-4 border-bottom pb-2">プログラミング</h5>
-                            <ul class="list-group list-group-flush text-secondary">
-                                <li class="list-group-item border-0 px-0 py-2"><strong class="text-dark">HTML /
-                                        CSS</strong>：Webページ制作</li>
-                                <li class="list-group-item border-0 px-0 py-2"><strong
-                                        class="text-dark">JavaScript</strong>：簡単な動的処理</li>
-                                <li class="list-group-item border-0 px-0 py-2"><strong
-                                        class="text-dark">Python</strong>：データ解析・可視化</li>
-                            </ul>
-                        </div>
-                    </div>
+            <div class="col-md-3">
+              <div class="p-2 card bg-light border-0 shadow-xs">
+                <div class="fw-bold text-danger mb-2 d-flex justify-content-between align-items-center">
+                  <span>🚨 期限超過 (Overdue)</span>
+                  <span class="badge bg-danger rounded-pill" id="badge-overdue">0</span>
                 </div>
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-4 border-bottom pb-2">資格</h5>
-                            <ul class="list-group list-group-flush text-secondary">
-                                <li class="list-group-item border-0 px-0 py-2">基本情報技術者試験</li>
-                                <li class="list-group-item border-0 px-0 py-2">応用情報技術者試験</li>
-                                <li class="list-group-item border-0 px-0 py-2">TOEIC 800点</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <div id="col-overdue" class="kanban-col p-2 d-flex flex-column gap-2"></div>
+              </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Works -->
-    <section id="works" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-5">制作物</h2>
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col-md-8">
-                        <div class="card-body p-4 p-md-5">
-                            <h5 class="card-title fw-bold mb-3">
-                                タスク管理Webアプリ
-                            </h5>
-                            <p class="card-text text-secondary lh-lg mb-4">
-                                タスクの追加・編集・削除ができる、
-                                シンプルなタスク管理Webアプリを制作しました。
-                                個人制作として、基本的なCRUD操作の理解を目的としています。
-                            </p>
-                            <p class="card-text mb-4">
-                                <span class="badge bg-secondary me-1">HTML</span>
-                                <span class="badge bg-secondary me-1">CSS</span>
-                                <span class="badge bg-secondary">JavaScript</span>
-                            </p>
-                            <a href="#" class="btn btn-outline-primary px-4 rounded-pill">
-                                詳細を見る
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center p-4">
-                        <img src="https://via.placeholder.com/400x250" alt="制作物のスクリーンショット"
-                            class="img-fluid rounded shadow-sm object-fit-cover"
-                            style="max-height: 200px; width: 100%;">
-                    </div>
+            <div class="col-md-3">
+              <div class="p-2 card bg-light border-0 shadow-xs">
+                <div class="fw-bold text-success mb-2 d-flex justify-content-between align-items-center">
+                  <span>✅ 完了済 (Done)</span>
+                  <span class="badge bg-success rounded-pill" id="badge-done">0</span>
                 </div>
+                <div id="col-done" class="kanban-col p-2 d-flex flex-column gap-2"></div>
+              </div>
             </div>
+
+          </div>
         </div>
-    </section>
 
+      </div>
+    </div>
 
-
-    <!-- フッター -->
-    <footer>
-        <div class="container">
-            <p class="mb-0">&copy; 2026 Portfolio Workshop Sample</p>
-        </div>
-    </footer>
-
-</body>
-
+    <script src="main.js"></script>
+  </body>
 </html>
