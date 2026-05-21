@@ -1,150 +1,374 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Enterprise Kanban & Markov Analytics Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-      .kanban-col { min-height: 500px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #dee2e6; }
-      .importance-high { border-left: 5px solid #dc3545 !important; }
-      .importance-medium { border-left: 5px solid #ffc107 !important; }
-      .importance-low { border-left: 5px solid #0d6efd !important; }
-      .importance-none { border-left: 5px solid #6c757d !important; }
-      .fs-7 { font-size: 0.75rem; }
-    </style>
-  </head>
-  <body class="bg-light">
 
-    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm px-4">
-      <span class="navbar-brand mb-0 h1 fw-bold">📈 KANBAN WORKSPACE & STOCHASTIC MATHEMATICS ENGINE</span>
-      <div class="d-flex gap-2">
-        <button id="btn-export" class="btn btn-sm btn-outline-light">📤 JSONエクスポート</button>
-        <button id="btn-import-trigger" class="btn btn-sm btn-outline-light" onclick="document.getElementById('import-file').click()">📥 JSONインポート</button>
-        <input type="file" id="import-file" class="d-none" accept=".json" />
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ポートフォリオテンプレート</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .hero {
+            position: relative;
+            background-image: url("https://via.placeholder.com/1200x400");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        footer {
+            background: #343a40;
+            color: #aaa;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* Task & Kanban UI Custom Classes */
+        .kanban-col { min-height: 450px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #dee2e6; }
+        .importance-high { border-left: 5px solid #dc3545 !important; }
+        .importance-medium { border-left: 5px solid #ffc107 !important; }
+        .importance-low { border-left: 5px solid #0d6efd !important; }
+        .importance-none { border-left: 5px solid #6c757d !important; }
+        .fs-7 { font-size: 0.75rem; }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Portfolio Template</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#workspace-tabs-section">Works & Tools</a></li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <div class="container-fluid px-4">
-      <div class="row g-4">
-        
-        <div class="col-xl-4 col-lg-5">
-          
-          <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white py-2 fw-bold text-secondary">📝 タスク & 工程登録</div>
-            <div class="card-body">
-              <form id="todo-form">
-                <div class="row g-2 mb-2">
-                  <div class="col-8">
-                    <input id="todo-input" class="form-control form-control-sm" placeholder="メインタスク名..." required />
-                  </div>
-                  <div class="col-4">
-                    <select id="todo-importance" class="form-select form-select-sm">
-                      <option value="none">重要度: なし</option>
-                      <option value="low">重要度: 低</option>
-                      <option value="medium" selected>重要度: 中</option>
-                      <option value="high">重要度: 高</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row g-2 mb-2">
-                  <div class="col-6">
-                    <input type="datetime-local" id="todo-deadline" class="form-control form-control-sm" />
-                  </div>
-                  <div class="col-6">
-                    <input type="url" id="todo-link" class="form-control form-control-sm" placeholder="URL (https://...)" />
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <textarea id="todo-comment" class="form-control form-control-sm" rows="1" placeholder="メモ・詳細..."></textarea>
-                </div>
+    <section class="hero d-flex align-items-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">My Portfolio</h1>
+            <p class="lead">Portfolio Workshop Template</p>
+        </div>
+    </section>
 
-                <div class="p-2 border rounded bg-light mb-3">
-                  <small class="fw-bold d-block text-muted mb-1">🏁 サブ・マイルストーン工程追加</small>
-                  <div class="row g-1 mb-1">
-                    <div class="col-7"><input type="text" id="ms-title-input" class="form-control form-control-sm" placeholder="マイルストーン名..." /></div>
-                    <div class="col-5">
-                      <select id="ms-importance-input" class="form-select form-select-sm">
-                        <option value="none">優先: なし</option>
-                        <option value="low">優先: 低</option>
-                        <option value="medium" selected>優先: 中</option>
-                        <option value="high">優先: 高</option>
-                      </select>
+    <section id="profile" class="py-5 bg-white">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">プロフィール</h2>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                    <img src="https://via.placeholder.com/400x250" class="rounded-circle shadow-sm mb-3"
+                        style="width:200px; height:200px; object-fit:cover;" alt="プロフィール画像">
+                </div>
+                <div class="col-md-8">
+                    <ul class="list-unstyled fs-5 lh-lg mb-4">
+                        <li class="fw-bold fs-3 border-bottom pb-2 mb-3">○○ ○○</li>
+                        <li><strong>所属：</strong>九州工業大学 情報工学部（大学院）</li>
+                        <li><strong>研究室：</strong>○○研究室</li>
+                        <li><strong>Email：</strong>example[at]example.com</li>
+                        <li><strong>GitHub：</strong>github.com/example</li>
+                    </ul>
+                    <p class="text-secondary lh-base">
+                        私は授業演習や研究課題を通して、問題解決力と論理的思考を身につけてきました。
+                        チームでの開発経験もあり、協調性やコミュニケーション力にも自信があります。
+                        小規模ながらWebアプリやデータ解析プロジェクトを手掛け、成果を形にする力も養いました。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">活動・経験（授業・研究など）</h2>
+            <p class="text-center text-secondary mb-5">
+                ※自分の学年や状況に合わせて、授業で取り組んだこと、研究内容、課外活動などでアピールしたいことを記載しましょう。
+            </p>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-8">
+                        <div class="card-body p-4 p-md-5">
+                            <h5 class="card-title fw-bold mb-3">
+                                【授業・演習】プログラミング演習でのチーム開発
+                            </h5>
+                            <p class="card-text text-secondary lh-lg">
+                                学部2年次のプログラミング演習にて、3人1組のチームで〇〇アプリを制作しました。
+                                役割分担やスケジュールの管理を行いながら、協力して課題を完成させました。
+                                この経験から、チームで開発を進める際のコミュニケーションの重要性を学びました。
+                            </p>
+                        </div>
                     </div>
-                  </div>
-                  <div class="input-group input-group-sm">
-                    <input type="datetime-local" id="ms-deadline-input" class="form-control" />
-                    <button class="btn btn-success text-white fw-bold" type="button" id="add-milestone-btn">+</button>
-                  </div>
-                  <div id="milestone-queue" class="d-flex flex-wrap gap-1 mt-1"></div>
+                    <div class="col-md-4 text-center p-4">
+                        <img src="https://via.placeholder.com/400x250?text=Class+Work" alt="授業での取り組みイメージ"
+                            class="img-fluid rounded shadow-sm object-fit-cover"
+                            style="max-height: 200px; width: 100%;">
+                    </div>
                 </div>
-
-                <button class="btn btn-primary btn-sm w-100 fw-bold" type="submit">🚀 ワークスペースへ追加</button>
-              </form>
             </div>
-          </div>
 
-          <div class="card shadow-sm border-secondary mb-4">
-            <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center">
-              <span class="fw-bold small">🧮 確率的マルコフ連鎖 & ネットワーク解析</span>
-              <button id="btn-run-analytics" class="btn btn-xs btn-info py-0 px-2 font-monospace text-white style-sm" style="font-size:0.7rem;">解析実行</button>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-8">
+                        <div class="card-body p-4 p-md-5">
+                            <h5 class="card-title fw-bold mb-3">
+                                【研究内容】Webユーザ行動ログの分析
+                            </h5>
+                            <p class="card-text text-secondary lh-lg">
+                                Webサイトのアクセスログを対象に、
+                                ユーザの閲覧傾向や行動パターンを分析する研究を行っています。
+                                Pythonを用いたデータ処理や可視化を通して、
+                                データから傾向を読み取る力を養っています。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center p-4">
+                        <img src="https://via.placeholder.com/400x250?text=Research" alt="研究テーマのイメージ"
+                            class="img-fluid rounded shadow-sm object-fit-cover"
+                            style="max-height: 200px; width: 100%;">
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-3" id="analytics-output">
-              <p class="text-muted small text-center mb-0">「解析実行」ボタンをクリックすると、現在のタスク構造から確率行列とクリティカルパスの依存度を算出します。</p>
-            </div>
-          </div>
-
         </div>
+    </section>
 
-        <div class="col-xl-8 col-lg-7">
-          <div class="row g-2">
+    <section id="skills" class="py-5 bg-white">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">スキル・資格</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-4 border-bottom pb-2">プログラミング</h5>
+                            <ul class="list-group list-group-flush text-secondary">
+                                <li class="list-group-item border-0 px-0 py-2"><strong class="text-dark">HTML / CSS</strong>：Webページ制作</li>
+                                <li class="list-group-item border-0 px-0 py-2"><strong class="text-dark">JavaScript</strong>：動的・分析処理</li>
+                                <li class="list-group-item border-0 px-0 py-2"><strong class="text-dark">Python</strong>：データ解析・可視化</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-4 border-bottom pb-2">資格</h5>
+                            <ul class="list-group list-group-flush text-secondary">
+                                <li class="list-group-item border-0 px-0 py-2">基本情報技術者試験</li>
+                                <li class="list-group-item border-0 px-0 py-2">応用情報技術者試験</li>
+                                <li class="list-group-item border-0 px-0 py-2">TOEIC 800点</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="workspace-tabs-section" class="py-5 bg-light">
+        <div class="container-fluid px-lg-5">
+            <h2 class="text-center fw-bold mb-4">制作物 & 実装ワークスペース</h2>
             
-            <div class="col-md-3">
-              <div class="p-2 card bg-light border-0 shadow-xs">
-                <div class="fw-bold text-primary mb-2 d-flex justify-content-between align-items-center">
-                  <span>📥 未着手 (Todo)</span>
-                  <span class="badge bg-primary rounded-pill" id="badge-todo">0</span>
-                </div>
-                <div id="col-todo" class="kanban-col p-2 d-flex flex-column gap-2"></div>
-              </div>
-            </div>
+            <ul class="nav nav-tabs justify-content-center mb-4" id="portfolioTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold px-4" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-content" type="button" role="tab">
+                        📄 制作物概要 (Overview)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold px-4 text-primary" id="kanban-tab" data-bs-toggle="tab" data-bs-target="#kanban-content" type="button" role="tab">
+                        🎯 タスク管理システム (Kanban Dashboard)
+                    </button>
+                </li>
+            </ul>
 
-            <div class="col-md-3">
-              <div class="p-2 card bg-light border-0 shadow-xs">
-                <div class="fw-bold text-warning mb-2 d-flex justify-content-between align-items-center">
-                  <span>⚡ 進行中 (Progress)</span>
-                  <span class="badge bg-warning text-dark rounded-pill" id="badge-progress">0</span>
+            <div class="tab-content" id="portfolioTabsContent">
+                
+                <div class="tab-pane fade show active" id="overview-content" role="tabpanel">
+                    <div class="container">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-md-8">
+                                    <div class="card-body p-4 p-md-5">
+                                        <h5 class="card-title fw-bold mb-3">タスク管理Webアプリ</h5>
+                                        <p class="card-text text-secondary lh-lg mb-4">
+                                            基本CRUD操作に加え、Graph Theory（ネットワーク次数中心性分析）及びStochastic Process（マルコフ連鎖モデル）の数理アルゴリズムを組み合わせた、高度リソース最適化モジュール搭載の次世代カンバン型タスクマネージャーです。
+                                        </p>
+                                        <p class="card-text mb-4">
+                                            <span class="badge bg-secondary me-1">HTML5</span>
+                                            <span class="badge bg-secondary me-1">Bootstrap 5</span>
+                                            <span class="badge bg-secondary me-1">Pure JavaScript</span>
+                                            <span class="badge bg-info text-dark">Markov Chain Engine</span>
+                                        </p>
+                                        <button class="btn btn-primary px-4 rounded-pill" onclick="document.getElementById('kanban-tab').click()">
+                                            ワークスペースを起動する &raquo;
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center p-4">
+                                    <img src="https://via.placeholder.com/400x250?text=Kanban+Architecture" alt="制作物のスクリーンショット"
+                                        class="img-fluid rounded shadow-sm object-fit-cover"
+                                        style="max-height: 200px; width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="col-progress" class="kanban-col p-2 d-flex flex-column gap-2"></div>
-              </div>
-            </div>
 
-            <div class="col-md-3">
-              <div class="p-2 card bg-light border-0 shadow-xs">
-                <div class="fw-bold text-danger mb-2 d-flex justify-content-between align-items-center">
-                  <span>🚨 期限超過 (Overdue)</span>
-                  <span class="badge bg-danger rounded-pill" id="badge-overdue">0</span>
+                <div class="tab-pane fade" id="kanban-content" role="tabpanel">
+                    
+                    <div class="card p-2 mb-3 bg-dark border-0 shadow-sm d-flex flex-row justify-content-between align-items-center rounded px-3">
+                        <span class="text-white small fw-bold font-monospace">🎯 ALGORITHMIC PRODUCTIVITY SYSTEM</span>
+                        <div class="d-flex gap-2">
+                            <button id="btn-export" class="btn btn-xs btn-outline-light py-1 px-2 fs-7">📤 エクスポート (JSON)</button>
+                            <button id="btn-import-trigger" class="btn btn-xs btn-outline-light py-1 px-2 fs-7" onclick="document.getElementById('import-file').click()">📥 インポート</button>
+                            <input type="file" id="import-file" class="d-none" accept=".json" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header bg-white py-2 fw-bold text-secondary fs-7">📝 新規アイテム・工程作成</div>
+                                <div class="card-body p-3">
+                                    <form id="todo-form">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-8">
+                                                <input id="todo-input" class="form-control form-control-sm" placeholder="メインタスク名を入力..." required />
+                                            </div>
+                                            <div class="col-4">
+                                                <select id="todo-importance" class="form-select form-select-sm">
+                                                    <option value="none">優先度: なし</option>
+                                                    <option value="low">優先度: 低</option>
+                                                    <option value="medium" selected>優先度: 中</option>
+                                                    <option value="high">優先度: 高</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <input type="datetime-local" id="todo-deadline" class="form-control form-control-sm" />
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="url" id="todo-link" class="form-control form-control-sm" placeholder="参考URL (https://...)" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <textarea id="todo-comment" class="form-control form-control-sm" rows="1" placeholder="メモ・詳細コメント..."></textarea>
+                                        </div>
+
+                                        <div class="p-2 border rounded bg-light mb-3">
+                                            <small class="fw-bold d-block text-muted mb-1 fs-7">🏁 子工程マイルストーン設定</small>
+                                            <div class="row g-1 mb-1">
+                                                <div class="col-7"><input type="text" id="ms-title-input" class="form-control form-control-sm" placeholder="マイルストーン名..." /></div>
+                                                <div class="col-5">
+                                                    <select id="ms-importance-input" class="form-select form-select-sm">
+                                                        <option value="none">低負荷</option>
+                                                        <option value="low">重要: 低</option>
+                                                        <option value="medium" selected>重要: 中</option>
+                                                        <option value="high">重要: 高</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="datetime-local" id="ms-deadline-input" class="form-control" />
+                                                <button class="btn btn-success text-white fw-bold" type="button" id="add-milestone-btn">+</button>
+                                            </div>
+                                            <div id="milestone-queue" class="d-flex flex-wrap gap-1 mt-1"></div>
+                                        </div>
+
+                                        <button class="btn btn-primary btn-sm w-100 fw-bold" type="submit">🚀 カンバンへデプロイ</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-sm border-secondary">
+                                <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center fs-7">
+                                    <span class="fw-bold">🧮 マルコフ定常推定 & 構造中心性解析</span>
+                                    <button id="btn-run-analytics" class="btn btn-info btn-sm py-0 px-2 text-white font-monospace" style="font-size:0.65rem;">解析計算</button>
+                                </div>
+                                <div class="card-body p-3" id="analytics-output">
+                                    <p class="text-muted small text-center mb-0">解析実行を押すと、システムのデータ推移確率から収束グラフ分布を予測抽出します。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <div class="p-2 card bg-white border shadow-xs h-100">
+                                        <div class="fw-bold text-primary mb-2 d-flex justify-content-between align-items-center fs-7">
+                                            <span>📥 未着手 (Todo)</span>
+                                            <span class="badge bg-primary rounded-pill" id="badge-todo">0</span>
+                                        </div>
+                                        <div id="col-todo" class="kanban-col p-1 d-flex flex-column gap-2"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-2 card bg-white border shadow-xs h-100">
+                                        <div class="fw-bold text-warning mb-2 d-flex justify-content-between align-items-center fs-7">
+                                            <span>⚡ 進行中 (Progress)</span>
+                                            <span class="badge bg-warning text-dark rounded-pill" id="badge-progress">0</span>
+                                        </div>
+                                        <div id="col-progress" class="kanban-col p-1 d-flex flex-column gap-2"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-2 card bg-white border shadow-xs h-100">
+                                        <div class="fw-bold text-danger mb-2 d-flex justify-content-between align-items-center fs-7">
+                                            <span>🚨 期限超過 (Overdue)</span>
+                                            <span class="badge bg-danger rounded-pill" id="badge-overdue">0</span>
+                                        </div>
+                                        <div id="col-overdue" class="kanban-col p-1 d-flex flex-column gap-2"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-2 card bg-white border shadow-xs h-100">
+                                        <div class="fw-bold text-success mb-2 d-flex justify-content-between align-items-center fs-7">
+                                            <span>✅ 完了済 (Done)</span>
+                                            <span class="badge bg-success rounded-pill" id="badge-done">0</span>
+                                        </div>
+                                        <div id="col-done" class="kanban-col p-1 d-flex flex-column gap-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div id="col-overdue" class="kanban-col p-2 d-flex flex-column gap-2"></div>
-              </div>
             </div>
-
-            <div class="col-md-3">
-              <div class="p-2 card bg-light border-0 shadow-xs">
-                <div class="fw-bold text-success mb-2 d-flex justify-content-between align-items-center">
-                  <span>✅ 完了済 (Done)</span>
-                  <span class="badge bg-success rounded-pill" id="badge-done">0</span>
-                </div>
-                <div id="col-done" class="kanban-col p-2 d-flex flex-column gap-2"></div>
-              </div>
-            </div>
-
-          </div>
         </div>
+    </section>
 
-      </div>
-    </div>
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2026 Portfolio Workshop Sample</p>
+        </div>
+    </footer>
 
     <script src="main.js"></script>
-  </body>
+</body>
+
 </html>
